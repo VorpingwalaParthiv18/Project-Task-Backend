@@ -1,12 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
-import { config } from "dotenv";
+import dotenv from "dotenv";
 import authRoutes from "./Routes/authRoutes.js";
 import taskRoutes from "./Routes/TaskRoutes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-config();
+dotenv.config();
 
 export const app = express();
 app.use(express.json());
