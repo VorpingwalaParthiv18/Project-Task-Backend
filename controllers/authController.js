@@ -30,6 +30,7 @@ export async function registerUser(req, res) {
         httpOnly: true, // not accessible by JS
         maxAge: 24 * 60 * 60 * 1000, // 1 day
         sameSite: "none",
+        secure: true, 
       })
       .status(201)
       .json({
@@ -62,7 +63,9 @@ export async function loginUser(req, res) {
       .cookie("token", token, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
+
         sameSite: "none",
+          secure: true, 
       })
       .status(200)
       .json({
