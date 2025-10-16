@@ -30,7 +30,6 @@ mongoose
 // Routes
 app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
-app.use("/activities", activityRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
