@@ -1,48 +1,39 @@
 import express from "express";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import { config } from "dotenv";
 import authRoutes from "./Routes/authRoutes.js";
 import taskRoutes from "./Routes/TaskRoutes.js";
+import activityRoutes from "./Routes/activityRoutes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import serverless from "serverless-http";
 
-dotenv.config();
+config();
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: true, credentials: true }));
+app.use(
+  cors({
+    origin: true, // allows requests from any origin
+    credentials: true, // allow cookies to be sent
+  })
+);
 
-// --- MongoDB Serverless Connection ---
-let cached = global.mongoose;
+// Connect MongoDB
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
-async function connectDB() {
-  if (cached.conn) return cached.conn;
-
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(process.env.MONGO_URI).then((mongoose) => {
-      return mongoose;
-    });
-  }
-
-  cached.conn = await cached.promise;
-  console.log("MongoDB Connected");
-  return cached.conn;
-}
-
-// --- Connect to DB once (cold start) ---
-await connectDB();
-
-// --- Routes ---
+// Routes
 app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
+app.use("/activities", activityRoutes);
 
-// --- Error Handler ---
+// Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
@@ -52,5 +43,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// --- Export serverless handler ---
-export default serverless(app);
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
