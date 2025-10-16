@@ -5,63 +5,44 @@ import authRoutes from "./Routes/authRoutes.js";
 import taskRoutes from "./Routes/TaskRoutes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import serverless from 'serverless-http'; 
+import serverless from "serverless-http";
 
 dotenv.config();
 
- const app = express();
+const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: true, // allows requests from any origin
-    credentials: true, // allow cookies to be sent
-  })
-);
+app.use(cors({ origin: true, credentials: true }));
 
-// Connect MongoDB
-// mongoose
-//   .connect(process.env.MONGO_URI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => console.log("MongoDB Connected"))
-//   .catch((err) => console.error("MongoDB connection error:", err));
+// --- MongoDB Serverless Connection ---
+let cached = global.mongoose;
 
-let isConnected = false;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
-const connectDB = async () => {
-  // if (isConnected) {
-  //   console.log("Already connected to the database.");
-  //   return;
-  // }
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+async function connectDB() {
+  if (cached.conn) return cached.conn;
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.MONGO_URI).then((mongoose) => {
+      return mongoose;
     });
-    isConnected = true;
-    console.log("MongoDB Connected");
-  } catch (err) {
-    console.error("MongoDB connection error:", err);
   }
+
+  cached.conn = await cached.promise;
+  console.log("MongoDB Connected");
+  return cached.conn;
 }
 
-//add middleware to connect to DB
-app.use( (req, res, next) => {
-  if (!isConnected) {
-     connectDB();
-  }
-  next();
-}
-);
+// --- Connect to DB once (cold start) ---
+await connectDB();
 
-
-// Routes
+// --- Routes ---
 app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
 
-// Error handler
+// --- Error Handler ---
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
@@ -71,9 +52,5 @@ app.use((err, req, res, next) => {
   });
 });
 
-  export default serverless(app);
-
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
+// --- Export serverless handler ---
+export default serverless(app);
