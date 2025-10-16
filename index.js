@@ -13,8 +13,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5175","https://project-task-backend-pdu2.vercel.app"], // allows requests from any origin
-    credentials: true, // allow cookies to be sent
+    origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5175"]
   })
 );
 
