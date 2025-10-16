@@ -5,6 +5,7 @@ import authRoutes from "./Routes/authRoutes.js";
 import taskRoutes from "./Routes/TaskRoutes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import serverless from 'serverless-http'; 
 
 dotenv.config();
 
