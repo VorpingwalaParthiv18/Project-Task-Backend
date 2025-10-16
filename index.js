@@ -48,9 +48,9 @@ const connectDB = async () => {
 }
 
 //add middleware to connect to DB
-app.use(async (req, res, next) => {
+app.use( (req, res, next) => {
   if (!isConnected) {
-    await connectDB();
+     connectDB();
   }
   next();
 }
