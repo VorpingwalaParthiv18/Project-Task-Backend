@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import { config } from "dotenv";
 import authRoutes from "./Routes/authRoutes.js";
 import taskRoutes from "./Routes/TaskRoutes.js";
-import activityRoutes from "./Routes/activityRoutes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
