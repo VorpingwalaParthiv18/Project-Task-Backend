@@ -8,7 +8,7 @@ import cors from "cors";
 
 dotenv.config();
 
-export const app = express();
+ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -69,6 +69,8 @@ app.use((err, req, res, next) => {
     error: err.message,
   });
 });
+
+  export default serverless(app);
 
 // const PORT = process.env.PORT || 5000;
 // app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
