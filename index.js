@@ -11,10 +11,12 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-  origin: 'http://localhost:5175', // your frontend local URL
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5175"], // allows requests from any origin
+    credentials: true, // allow cookies to be sent
+  })
+);
 
 // Connect MongoDB
 mongoose
