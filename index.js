@@ -14,7 +14,7 @@ app.use(cookieParser());
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://project-task-backend-pdu2.vercel.app"
+  "https://project-task-frontend-neon.vercel.app"
 ];
 
 app.use(cors({
